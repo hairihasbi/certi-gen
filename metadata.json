@@ -1,0 +1,7 @@
+{
+  "name": "Certi Gen",
+  "description": "Sistem Manajemen Sertifikat Digital dengan Verifikasi QR Code",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
