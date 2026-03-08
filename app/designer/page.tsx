@@ -49,10 +49,10 @@ export default function DesignerPage() {
   }
 
   const tabs = [
-    { id: "design", label: "1. Design Template", icon: Palette, description: "Create or import template" },
-    { id: "data", label: "2. Input Data", icon: Database, description: "Manual or CSV import" },
-    { id: "edit", label: "3. Edit Process", icon: Move, description: "Position placeholders" },
-    { id: "generate", label: "4. Generate", icon: Play, description: "Final export & numbering" },
+    { id: "design", label: "Design", icon: Palette, description: "Create or import template" },
+    { id: "data", label: "Data", icon: Database, description: "Manual or CSV import" },
+    { id: "edit", label: "Edit", icon: Move, description: "Position placeholders" },
+    { id: "generate", label: "Generate", icon: Play, description: "Final export & numbering" },
     { id: "settings", label: "Settings", icon: Settings, description: "API credentials" },
   ];
 
