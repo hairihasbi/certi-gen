@@ -122,6 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Initial session check
     const checkInitialSession = async () => {
+      if (!supabase) return;
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
@@ -136,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     checkInitialSession();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase!.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state changed:", event, "User ID:", session?.user?.id);
       
       if (event === "SIGNED_OUT") {
@@ -178,7 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchProfile]);
 
   useEffect(() => {
-    if (user?.role === "admin") {
+    if (user?.role === "admin" && supabase) {
       const timer = setTimeout(() => {
         fetchAllUsers();
       }, 0);
