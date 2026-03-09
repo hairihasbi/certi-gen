@@ -110,7 +110,7 @@ export function useRealtimeData() {
   }, [user, fetchTemplates, fetchCertificates, fetchSystemStats]);
 
   const saveTemplate = useCallback(async (name: string, elements: any[], backgroundUrl: string | null) => {
-    if (!supabase || !user) return { error: "Not connected" };
+    if (!supabase || !user) return { error: { message: "Not connected" } };
 
     const { data, error } = await supabase
       .from("templates")
@@ -128,7 +128,7 @@ export function useRealtimeData() {
   }, [user]);
 
   const saveCertificate = useCallback(async (templateId: string, recipientData: any, certNumber: string, imageUrl: string, digitalHash: string) => {
-    if (!supabase || !user) return { error: "Not connected" };
+    if (!supabase || !user) return { error: { message: "Not connected" } };
 
     const { data, error } = await supabase
       .from("certificates")
@@ -147,7 +147,7 @@ export function useRealtimeData() {
   }, [user]);
 
   const saveSetting = useCallback(async (id: string, value: any) => {
-    if (!supabase || !user) return { error: "Not connected" };
+    if (!supabase || !user) return { error: { message: "Not connected" } };
 
     const { data, error } = await supabase
       .from("settings")
@@ -163,7 +163,7 @@ export function useRealtimeData() {
   }, [user]);
 
   const fetchSetting = useCallback(async (id: string) => {
-    if (!supabase) return { error: "Not connected" };
+    if (!supabase) return { error: { message: "Not connected" } };
 
     const { data, error } = await supabase
       .from("settings")
@@ -175,7 +175,7 @@ export function useRealtimeData() {
   }, []);
 
   const deleteTemplate = useCallback(async (id: string) => {
-    if (!supabase || !user) return { error: "Not connected" };
+    if (!supabase || !user) return { error: { message: "Not connected" } };
 
     const { error } = await supabase
       .from("templates")
