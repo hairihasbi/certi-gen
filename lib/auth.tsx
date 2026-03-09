@@ -45,52 +45,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [logs, setLogs] = useState<SystemLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchProfile = useCallback(async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string, retries = 3) => {
     if (!supabase) return null;
-    console.log("Fetching profile for userId:", userId);
+    console.log(`Fetching profile for userId: ${userId}, attempt: ${4 - retries}`);
     
-    try {
-      const fetchPromise = supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", userId)
-        .single();
-      
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Timeout")), 5000)
-      );
+    for (let i = 0; i < retries; i++) {
+      try {
+        const fetchPromise = supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", userId)
+          .single();
+        
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 15000)
+        );
 
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
-      
-      if (error) {
-        console.error("Error fetching profile:", {
-          message: error.message,
-          code: error.code,
-          details: error.details,
-          hint: error.hint
-        });
-        return null;
+        const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
+        
+        if (error) {
+          console.error(`Error fetching profile (attempt ${i + 1}):`, error.message);
+          if (i === retries - 1) return null;
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+          continue;
+        }
+        
+        if (!data) {
+          console.warn(`No profile data found for userId: ${userId}`);
+          return null;
+        }
+        
+        console.log("Profile data fetched successfully:", data);
+        
+        return {
+          id: data.id,
+          username: data.username,
+          role: data.role as Role,
+          isActive: data.is_active,
+          isApproved: data.is_approved,
+          createdAt: data.created_at,
+        };
+      } catch (err) {
+        console.error(`Profile fetch failed or timed out (attempt ${i + 1}):`, err);
+        if (i === retries - 1) return null;
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
       }
-      
-      if (!data) {
-        console.warn("No profile data found for userId:", userId);
-        return null;
-      }
-      
-      console.log("Profile data fetched successfully:", data);
-      
-      return {
-        id: data.id,
-        username: data.username,
-        role: data.role as Role,
-        isActive: data.is_active,
-        isApproved: data.is_approved,
-        createdAt: data.created_at,
-      };
-    } catch (err) {
-      console.error("Profile fetch failed or timed out:", err);
-      return null;
     }
+    return null;
   }, []);
 
   const fetchAllUsers = useCallback(async () => {
