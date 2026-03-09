@@ -71,8 +71,12 @@ export default function CanvaDesignerPage() {
           <CanvaDesigner 
             onSave={async (url) => {
               // Save to Supabase
-              await saveTemplate("Canva Template", [], url);
-              router.push("/designer?tab=data");
+              const { data, error } = await saveTemplate("Canva Template", [], url);
+              if (!error && data) {
+                router.push(`/designer?tab=data&templateId=${data.id}`);
+              } else {
+                router.push("/designer?tab=data");
+              }
             }}
           />
         </div>
