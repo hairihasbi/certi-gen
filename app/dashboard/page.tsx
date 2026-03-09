@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { InfrastructureStatus } from "@/components/InfrastructureStatus";
 import { DatabaseSetupGuide } from "@/components/DatabaseSetupGuide";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
@@ -47,9 +48,20 @@ export default function DashboardPage() {
   const isLoading = authLoading || dataLoading;
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.push("/login");
-    }
+    const checkAuth = async () => {
+      if (!isLoading && !user) {
+        // Double check session before redirecting to avoid premature logout
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            router.push("/login");
+          }
+        } else {
+          router.push("/login");
+        }
+      }
+    };
+    checkAuth();
   }, [user, isLoading, router]);
 
   if (isLoading || !user) {
@@ -102,7 +114,7 @@ export default function DashboardPage() {
             </Link>
             
             <nav className="hidden lg:flex items-center gap-1">
-              {["Overview", "Templates", "Certificates", "Analytics"].map((item) => (
+              {["Overview", "Templates", "Certificates"].map((item) => (
                 <button 
                   key={item} 
                   onClick={() => setActiveTab(item)}
@@ -575,38 +587,6 @@ export default function DashboardPage() {
               </div>
             )}
 
-            {activeTab === "Analytics" && (
-              <div className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
-                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">Uptime Sistem</h4>
-                    <div className="flex items-end gap-2">
-                      <span className="text-4xl font-bold text-stone-900 tracking-tight">99.99%</span>
-                      <span className="text-emerald-500 text-xs font-bold mb-1">Stable</span>
-                    </div>
-                  </div>
-                  <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
-                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">Rata-rata Waktu Generate</h4>
-                    <div className="flex items-end gap-2">
-                      <span className="text-4xl font-bold text-stone-900 tracking-tight">1.2s</span>
-                      <span className="text-stone-400 text-xs font-bold mb-1">Per Cert</span>
-                    </div>
-                  </div>
-                  <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
-                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-4">Verifikasi Berhasil</h4>
-                    <div className="flex items-end gap-2">
-                      <span className="text-4xl font-bold text-stone-900 tracking-tight">12.4k</span>
-                      <span className="text-indigo-500 text-xs font-bold mb-1">Total</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
-                  <h3 className="font-bold text-stone-900 mb-6">Status Infrastruktur Detail</h3>
-                  <InfrastructureStatus onStatusChange={setIsDbReady} />
-                </div>
-              </div>
-            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
