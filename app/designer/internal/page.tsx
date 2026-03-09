@@ -68,10 +68,14 @@ export default function InternalDesignerPage() {
 
       <div className="p-6">
         <InternalDesigner 
-          onSave={async (template, elements) => {
+          onSave={async (name, template, elements) => {
             // Save to Supabase
-            await saveTemplate("My Template", elements, template);
-            router.push("/designer?tab=data");
+            const { data, error } = await saveTemplate(name, elements, template);
+            if (!error && data) {
+              router.push(`/designer?tab=data&templateId=${data.id}`);
+            } else {
+              router.push("/designer?tab=data");
+            }
           }} 
         />
       </div>
