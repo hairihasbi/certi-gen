@@ -109,7 +109,7 @@ export function useRealtimeData() {
     };
   }, [user, fetchTemplates, fetchCertificates, fetchSystemStats]);
 
-  const saveTemplate = async (name: string, elements: any[], backgroundUrl: string | null) => {
+  const saveTemplate = useCallback(async (name: string, elements: any[], backgroundUrl: string | null) => {
     if (!supabase || !user) return { error: "Not connected" };
 
     const { data, error } = await supabase
@@ -125,9 +125,9 @@ export function useRealtimeData() {
       .single();
 
     return { data, error };
-  };
+  }, [user]);
 
-  const saveCertificate = async (templateId: string, recipientData: any, certNumber: string, imageUrl: string, digitalHash: string) => {
+  const saveCertificate = useCallback(async (templateId: string, recipientData: any, certNumber: string, imageUrl: string, digitalHash: string) => {
     if (!supabase || !user) return { error: "Not connected" };
 
     const { data, error } = await supabase
@@ -144,9 +144,9 @@ export function useRealtimeData() {
       .single();
 
     return { data, error };
-  };
+  }, [user]);
 
-  const saveSetting = async (id: string, value: any) => {
+  const saveSetting = useCallback(async (id: string, value: any) => {
     if (!supabase || !user) return { error: "Not connected" };
 
     const { data, error } = await supabase
@@ -160,9 +160,9 @@ export function useRealtimeData() {
       .single();
 
     return { data, error };
-  };
+  }, [user]);
 
-  const fetchSetting = async (id: string) => {
+  const fetchSetting = useCallback(async (id: string) => {
     if (!supabase) return { error: "Not connected" };
 
     const { data, error } = await supabase
@@ -172,7 +172,18 @@ export function useRealtimeData() {
       .single();
 
     return { data, error };
-  };
+  }, []);
+
+  const deleteTemplate = useCallback(async (id: string) => {
+    if (!supabase || !user) return { error: "Not connected" };
+
+    const { error } = await supabase
+      .from("templates")
+      .delete()
+      .eq("id", id);
+
+    return { error };
+  }, [user]);
 
   return {
     templates,
@@ -180,6 +191,7 @@ export function useRealtimeData() {
     systemStats,
     isLoading,
     saveTemplate,
+    deleteTemplate,
     saveCertificate,
     saveSetting,
     fetchSetting,
