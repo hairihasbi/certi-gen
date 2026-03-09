@@ -141,9 +141,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("Auth state changed:", event, "User ID:", session?.user?.id);
       
       if (event === "SIGNED_OUT") {
-        console.warn("User signed out automatically. Checking if it was intentional...");
-        setUser(null);
-        setIsLoading(false);
+        console.warn("User signed out event received.");
+        const { data: { session: currentSession } } = await supabase!.auth.getSession();
+        if (!currentSession) {
+          setUser(null);
+          setIsLoading(false);
+        } else {
+          console.log("Session still exists, ignoring SIGNED_OUT event.");
+        }
         return;
       }
 
@@ -172,9 +177,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
+    const keepAlive = setInterval(async () => {
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          console.log("Session keep-alive check: active");
+        }
+      }
+    }, 4 * 60 * 1000); // Every 4 minutes
+
     return () => {
       subscription.unsubscribe();
       clearTimeout(safetyTimeout);
+      clearInterval(keepAlive);
     };
   }, [fetchProfile]);
 
