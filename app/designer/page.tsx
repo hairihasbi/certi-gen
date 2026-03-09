@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Palette, ExternalLink, Settings, Award, ChevronRight, Sparkles, ArrowLeft, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
@@ -19,11 +19,13 @@ type Tab = "design" | "data" | "edit" | "generate" | "settings";
 
 export default function DesignerPage() {
   const { user, logout, isLoading } = useAuth();
-  const { saveTemplate } = useRealtimeData();
+  const { saveTemplate, templates, fetchTemplates } = useRealtimeData();
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<Tab>("design");
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<Tab>((searchParams.get("tab") as Tab) || "design");
   
   // Shared state for the workflow
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(searchParams.get("templateId"));
   const [savedTemplate, setSavedTemplate] = useState<string | null>(null);
   const [templateElements, setTemplateElements] = useState<any[]>([]);
   const [certificateData, setCertificateData] = useState<any[]>([]);
@@ -36,6 +38,28 @@ export default function DesignerPage() {
       }
     }
   }, [user, isLoading, router]);
+
+  useEffect(() => {
+    if (selectedTemplateId) {
+      const template = templates.find(t => t.id === selectedTemplateId);
+      if (template) {
+        setSavedTemplate(template.background_url);
+        setTemplateElements(template.elements || []);
+        // Extract placeholders from elements
+        const foundPlaceholders = template.elements
+          ?.filter((el: any) => el.type === "text" && el.text?.includes("{"))
+          ?.map((el: any) => {
+            const match = el.text.match(/{(.*?)}/);
+            return match ? match[1] : null;
+          })
+          ?.filter(Boolean) || [];
+        
+        if (foundPlaceholders.length > 0) {
+          setPlaceholders(Array.from(new Set([...placeholders, ...foundPlaceholders])));
+        }
+      }
+    }
+  }, [selectedTemplateId, templates]);
 
   if (isLoading || !user) {
     return (
@@ -55,6 +79,11 @@ export default function DesignerPage() {
     { id: "generate", label: "Generate", icon: Play, description: "Final export & numbering" },
     { id: "settings", label: "Settings", icon: Settings, description: "API credentials" },
   ];
+
+  const handleSelectTemplate = (id: string) => {
+    setSelectedTemplateId(id);
+    setActiveTab("data");
+  };
 
   return (
     <main className="min-h-screen bg-stone-50 pb-20">
@@ -144,40 +173,75 @@ export default function DesignerPage() {
             transition={{ duration: 0.3, ease: "easeOut" }}
           >
             {activeTab === "design" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-600 mb-6 group-hover:scale-110 transition-transform">
-                    <Palette className="w-10 h-10" />
+              <div className="space-y-12">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
+                    <div className="w-20 h-20 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-600 mb-6 group-hover:scale-110 transition-transform">
+                      <Palette className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-stone-900 mb-2">Internal Designer</h3>
+                    <p className="text-stone-500 mb-8 max-w-sm">
+                      Our professional built-in editor with full control over text, shapes, and images.
+                    </p>
+                    <Link 
+                      href="/designer/internal"
+                      className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all flex items-center justify-center gap-2"
+                    >
+                      Open Internal Designer
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
                   </div>
-                  <h3 className="text-2xl font-bold text-stone-900 mb-2">Internal Designer</h3>
-                  <p className="text-stone-500 mb-8 max-w-sm">
-                    Our professional built-in editor with full control over text, shapes, and images.
-                  </p>
-                  <Link 
-                    href="/designer/internal"
-                    className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all flex items-center justify-center gap-2"
-                  >
-                    Open Internal Designer
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
+
+                  <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
+                    <div className="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
+                      <ExternalLink className="w-10 h-10" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-stone-900 mb-2">Canva Integration</h3>
+                    <p className="text-stone-500 mb-8 max-w-sm">
+                      Design your certificate on Canva and import it directly into Certi Gen.
+                    </p>
+                    <Link 
+                      href="/designer/canva"
+                      className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                    >
+                      Design on Canva
+                      <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
-                    <ExternalLink className="w-10 h-10" />
+                {templates.length > 0 && (
+                  <div className="space-y-6">
+                    <h3 className="text-xl font-bold text-stone-900 flex items-center gap-2">
+                      <Database className="w-5 h-5 text-stone-400" />
+                      Your Saved Templates
+                    </h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                      {templates.map((template) => (
+                        <button
+                          key={template.id}
+                          onClick={() => handleSelectTemplate(template.id)}
+                          className={cn(
+                            "group relative aspect-[4/3] bg-white rounded-2xl border-2 overflow-hidden transition-all text-left",
+                            selectedTemplateId === template.id ? "border-stone-900 ring-4 ring-stone-100" : "border-stone-100 hover:border-stone-200"
+                          )}
+                        >
+                          {template.background_url ? (
+                            <img src={template.background_url} alt={template.name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                          ) : (
+                            <div className="w-full h-full bg-stone-50 flex items-center justify-center">
+                              <Palette className="w-8 h-8 text-stone-200" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
+                            <p className="text-white font-bold text-sm truncate">{template.name}</p>
+                            <p className="text-white/70 text-[10px] font-medium">Updated {new Date(template.updated_at).toLocaleDateString()}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-stone-900 mb-2">Canva Integration</h3>
-                  <p className="text-stone-500 mb-8 max-w-sm">
-                    Design your certificate on Canva and import it directly into Certi Gen.
-                  </p>
-                  <Link 
-                    href="/designer/canva"
-                    className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
-                  >
-                    Design on Canva
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
+                )}
               </div>
             )}
             {activeTab === "data" && (
@@ -187,6 +251,8 @@ export default function DesignerPage() {
                 placeholders={placeholders}
                 onNext={() => setActiveTab("edit")}
                 onBack={() => setActiveTab("design")}
+                selectedTemplateId={selectedTemplateId}
+                setSelectedTemplateId={setSelectedTemplateId}
               />
             )}
             {activeTab === "edit" && (
