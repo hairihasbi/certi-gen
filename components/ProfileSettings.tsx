@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { Settings, Key, Save, CheckCircle2, Info, Mail, Loader2, Palette, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
