@@ -120,14 +120,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }, 10000);
 
+    // Initial session check
+    const checkInitialSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const profile = await fetchProfile(session.user.id);
+          if (profile) setUser(profile);
+        }
+      } catch (err) {
+        console.error("Initial session check failed:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkInitialSession();
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.id);
+      console.log("Auth state changed:", event, "User ID:", session?.user?.id);
+      
+      if (event === "SIGNED_OUT") {
+        console.warn("User signed out automatically. Checking if it was intentional...");
+        setUser(null);
+        setIsLoading(false);
+        return;
+      }
+
+      if (event === "TOKEN_REFRESHED") {
+        console.log("Token refreshed successfully.");
+      }
+
       try {
         if (session?.user) {
           const profile = await fetchProfile(session.user.id);
           if (profile) {
             setUser(profile);
           } else {
+            console.error("Profile not found after auth state change.");
             setUser(null);
           }
         } else {
