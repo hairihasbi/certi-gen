@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Palette, ExternalLink, Settings, Award, ChevronRight, Sparkles, ArrowLeft, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
@@ -18,6 +18,21 @@ import { SupabaseStatus } from "@/components/SupabaseStatus";
 type Tab = "design" | "data" | "edit" | "generate" | "settings";
 
 export default function DesignerPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-stone-50">
+        <div className="animate-pulse flex flex-col items-center gap-4">
+          <div className="w-12 h-12 bg-stone-200 rounded-xl" />
+          <div className="h-4 w-32 bg-stone-200 rounded" />
+        </div>
+      </div>
+    }>
+      <DesignerContent />
+    </Suspense>
+  );
+}
+
+function DesignerContent() {
   const { user, logout, isLoading } = useAuth();
   const { saveTemplate, templates, fetchTemplates } = useRealtimeData();
   const router = useRouter();
