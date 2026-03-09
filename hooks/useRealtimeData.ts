@@ -183,6 +183,7 @@ export function useRealtimeData() {
     saveCertificate,
     saveSetting,
     fetchSetting,
+    fetchTemplates,
     refresh: () => Promise.all([fetchTemplates(), fetchCertificates(), fetchSystemStats()]),
   };
 }
