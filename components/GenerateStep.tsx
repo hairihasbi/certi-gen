@@ -3,7 +3,7 @@
 import React, { useState, useRef } from "react";
 import { Stage, Layer, Text, Image as KonvaImage, Rect, Circle, Star, RegularPolygon, Arrow, Group } from "react-konva";
 import useImage from "use-image";
-import { ArrowLeft, Download, Play, Loader2, Settings2, Hash, FileCheck, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Download, Play, Loader2, Settings2, Hash, FileCheck, CheckCircle2, Printer, Eye } from "lucide-react";
 import JSZip from "jszip";
 import { cn } from "@/lib/utils";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
@@ -26,6 +26,7 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [generatedImages, setGeneratedImages] = useState<string[]>([]);
   
   // Numbering settings
   const [numberingType, setNumberingType] = useState<"auto" | "manual">("auto");
@@ -47,8 +48,10 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
     setIsGenerating(true);
     setGenerationProgress(0);
     setIsComplete(false);
+    setGeneratedImages([]);
     
     const zip = new JSZip();
+    const images: string[] = [];
     const originalElements = [...elements];
     
     for (let i = 0; i < data.length; i++) {
@@ -87,6 +90,7 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
       
         if (stageRef.current) {
           const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
+          images.push(uri);
           const base64Data = uri.replace(/^data:image\/(png|jpg);base64,/, "");
           zip.file(`certificate-${certNumber.replace(/[/\\?%*:|"<>]/g, '-')}.png`, base64Data, { base64: true });
           
@@ -101,6 +105,7 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
       setGenerationProgress(Math.round(((i + 1) / data.length) * 100));
     }
     
+    setGeneratedImages(images);
     const content = await zip.generateAsync({ type: "blob" });
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
@@ -111,6 +116,25 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
     
     setIsGenerating(false);
     setIsComplete(true);
+  };
+
+  const handlePrint = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    printWindow.document.write('<html><head><title>Print Certificates</title>');
+    printWindow.document.write('<style>body { margin: 0; padding: 0; } img { width: 100%; height: auto; page-break-after: always; }</style>');
+    printWindow.document.write('</head><body>');
+    generatedImages.forEach(img => {
+      printWindow.document.write(`<img src="${img}" />`);
+    });
+    printWindow.document.write('</body></html>');
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 500);
   };
 
   return (
@@ -247,9 +271,18 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
               </button>
               
               {isComplete && (
-                <div className="flex items-center justify-center gap-2 text-emerald-400 text-xs font-bold animate-in fade-in slide-in-from-bottom-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  All certificates generated!
+                <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
+                  <div className="flex items-center justify-center gap-2 text-emerald-400 text-xs font-bold">
+                    <CheckCircle2 className="w-4 h-4" />
+                    All certificates generated!
+                  </div>
+                  <button 
+                    onClick={handlePrint}
+                    className="w-full py-3 bg-white text-stone-900 border-2 border-stone-900 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-stone-50 transition-all"
+                  >
+                    <Printer className="w-5 h-5" />
+                    Windows Print
+                  </button>
                 </div>
               )}
 
@@ -265,6 +298,25 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
               </div>
             </div>
           </div>
+
+          {isComplete && generatedImages.length > 0 && (
+            <div className="p-6 bg-white rounded-2xl shadow-sm border border-stone-200 animate-in fade-in slide-in-from-top-4">
+              <h3 className="text-sm font-bold text-stone-900 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Eye className="w-4 h-4 text-stone-400" />
+                Generated Preview ({generatedImages.length})
+              </h3>
+              <div className="grid grid-cols-2 gap-4 max-h-[400px] overflow-y-auto p-2">
+                {generatedImages.map((img, idx) => (
+                  <div key={idx} className="relative aspect-[4/3] rounded-lg border border-stone-100 overflow-hidden shadow-sm hover:shadow-md transition-all">
+                    <img src={img} alt={`Preview ${idx + 1}`} className="w-full h-full object-cover" />
+                    <div className="absolute top-2 left-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded font-bold">
+                      #{idx + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="lg:col-span-2 space-y-4">

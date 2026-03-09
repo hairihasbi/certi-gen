@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Upload, Plus, Trash2, FileSpreadsheet, ArrowRight, ArrowLeft, Database } from "lucide-react";
+import { Upload, Plus, Trash2, FileSpreadsheet, ArrowRight, ArrowLeft, Database, Download, Settings2 } from "lucide-react";
 import Papa from "papaparse";
 
 interface DataInputStepProps {
@@ -10,9 +10,19 @@ interface DataInputStepProps {
   placeholders: string[];
   onNext: () => void;
   onBack: () => void;
+  selectedTemplateId: string | null;
+  setSelectedTemplateId: (id: string | null) => void;
 }
 
-const DataInputStep: React.FC<DataInputStepProps> = ({ data, setData, placeholders, onNext, onBack }) => {
+const DataInputStep: React.FC<DataInputStepProps> = ({ 
+  data, 
+  setData, 
+  placeholders, 
+  onNext, 
+  onBack,
+  selectedTemplateId,
+  setSelectedTemplateId
+}) => {
   const [manualRow, setManualRow] = useState<any>({});
 
   const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +36,19 @@ const DataInputStep: React.FC<DataInputStepProps> = ({ data, setData, placeholde
         setData([...data, ...results.data]);
       },
     });
+  };
+
+  const downloadCsvTemplate = () => {
+    const csvContent = placeholders.join(",") + "\n";
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", "certificate_data_template.csv");
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const handleManualAdd = () => {
@@ -48,15 +71,33 @@ const DataInputStep: React.FC<DataInputStepProps> = ({ data, setData, placeholde
           <ArrowLeft className="w-4 h-4" />
           Back to Design
         </button>
-        <button 
-          onClick={onNext}
-          disabled={data.length === 0}
-          className="flex items-center gap-2 px-6 py-2 bg-stone-900 text-white rounded-lg font-bold hover:bg-stone-800 transition-all disabled:opacity-50"
-        >
-          Next: Position Elements
-          <ArrowRight className="w-4 h-4" />
-        </button>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={downloadCsvTemplate}
+            className="flex items-center gap-2 px-4 py-2 bg-stone-100 text-stone-600 rounded-lg font-bold hover:bg-stone-200 transition-all text-sm"
+          >
+            <Download className="w-4 h-4" />
+            Download CSV Template
+          </button>
+          <button 
+            onClick={onNext}
+            disabled={data.length === 0 || !selectedTemplateId}
+            className="flex items-center gap-2 px-6 py-2 bg-stone-900 text-white rounded-lg font-bold hover:bg-stone-800 transition-all disabled:opacity-50"
+          >
+            Next: Position Elements
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
+
+      {!selectedTemplateId && (
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 text-sm font-medium flex items-center gap-3">
+          <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+            <Settings2 className="w-4 h-4" />
+          </div>
+          Please select a template in the Design tab before proceeding.
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-1 space-y-6">

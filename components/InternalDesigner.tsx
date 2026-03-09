@@ -18,7 +18,8 @@ import {
 import { cn } from "@/lib/utils";
 import { ImageElement, QRElement, Element } from "./CanvasElements";
 
-const InternalDesigner = ({ onSave }: { onSave?: (template: string, elements: Element[]) => void }) => {
+const InternalDesigner = ({ onSave }: { onSave?: (name: string, template: string, elements: Element[]) => void }) => {
+  const [templateName, setTemplateName] = useState("My Template");
   const [elements, setElements] = useState<Element[]>([]);
   const [history, setHistory] = useState<Element[][]>([]);
   const [historyStep, setHistoryStep] = useState(-1);
@@ -350,7 +351,7 @@ const InternalDesigner = ({ onSave }: { onSave?: (template: string, elements: El
     setTimeout(() => {
       const uri = stageRef.current.toDataURL({ pixelRatio: 2 });
       if (onSave) {
-        onSave(uri, elements);
+        onSave(templateName, uri, elements);
       }
     }, 100);
   };
@@ -634,7 +635,17 @@ const InternalDesigner = ({ onSave }: { onSave?: (template: string, elements: El
   return (
     <div className="flex flex-col gap-6 p-6 bg-white rounded-2xl shadow-sm border border-stone-200">
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-lg font-bold text-stone-900">Internal Designer</h3>
+        <div className="flex items-center gap-4">
+          <h3 className="text-lg font-bold text-stone-900">Internal Designer</h3>
+          <div className="h-8 w-px bg-stone-200" />
+          <input 
+            type="text" 
+            value={templateName} 
+            onChange={(e) => setTemplateName(e.target.value)}
+            placeholder="Template Name"
+            className="bg-stone-50 border border-stone-200 rounded-lg px-3 py-1 text-sm font-bold text-stone-700 focus:outline-none focus:ring-2 focus:ring-stone-900/10 w-64"
+          />
+        </div>
         <div className="flex items-center gap-2">
           <button 
             onClick={handlePrintPDF}

@@ -134,10 +134,13 @@ const CanvaDesigner = ({ onSave }: { onSave?: (url: string) => void }) => {
                 >
                   Open Canva
                 </button>
-                <div className="px-4 py-2 bg-emerald-500 text-white rounded-lg font-semibold text-sm flex items-center gap-2">
+                <button 
+                  onClick={() => onSave?.(designUrl)}
+                  className="px-4 py-2 bg-emerald-500 text-white rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-emerald-600 transition-colors"
+                >
                   <CheckCircle2 className="w-4 h-4" />
-                  Ready to Use
-                </div>
+                  Save Template
+                </button>
               </div>
             </div>
           ) : (
