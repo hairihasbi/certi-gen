@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { useRealtimeData } from "@/hooks/useRealtimeData";
 import ProfileSettings from "@/components/ProfileSettings";
 import DataInputStep from "@/components/DataInputStep";
@@ -47,11 +48,20 @@ function DesignerContent() {
   const [placeholders, setPlaceholders] = useState<string[]>(["Name", "Institution", "NIP/NUPTK"]);
 
   useEffect(() => {
-    if (!isLoading) {
-      if (!user) {
-        router.push("/login");
+    const checkAuth = async () => {
+      if (!isLoading && !user) {
+        // Double check session before redirecting to avoid premature logout
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            router.push("/login");
+          }
+        } else {
+          router.push("/login");
+        }
       }
-    }
+    };
+    checkAuth();
   }, [user, isLoading, router]);
 
   useEffect(() => {
