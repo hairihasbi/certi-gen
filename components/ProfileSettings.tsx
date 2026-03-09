@@ -36,13 +36,9 @@ const ProfileSettings = () => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    const { error } = await saveSetting("email_config", config);
-    if (!error) {
-      setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 3000);
-    } else {
-      console.error("Error saving config:", error);
-    }
+    // Email config removed as per user request
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 3000);
     setIsSaving(false);
   };
 
@@ -93,105 +89,10 @@ const ProfileSettings = () => {
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-stone-900 font-bold border-b border-stone-100 pb-2">
-            <Mail className="w-4 h-4" />
-            <span className="text-sm uppercase tracking-wider">Email Configuration (SMTP)</span>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-stone-500 uppercase">SMTP Host</label>
-              <input 
-                type="text" 
-                value={config.smtpHost}
-                onChange={(e) => setConfig({ ...config, smtpHost: e.target.value })}
-                placeholder="smtp.gmail.com"
-                className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all outline-none text-sm"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-stone-500 uppercase">SMTP Port</label>
-              <input 
-                type="text" 
-                value={config.smtpPort}
-                onChange={(e) => setConfig({ ...config, smtpPort: e.target.value })}
-                placeholder="465"
-                className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all outline-none text-sm"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-stone-500 uppercase">SMTP User</label>
-            <input 
-              type="text" 
-              value={config.smtpUser}
-              onChange={(e) => setConfig({ ...config, smtpUser: e.target.value })}
-              placeholder="your-email@gmail.com"
-              className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all outline-none text-sm"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-stone-500 uppercase">SMTP Password</label>
-            <input 
-              type="password" 
-              value={config.smtpPass}
-              onChange={(e) => setConfig({ ...config, smtpPass: e.target.value })}
-              placeholder="••••••••••••"
-              className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all outline-none text-sm"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-stone-500 uppercase">From Email</label>
-              <input 
-                type="email" 
-                value={config.fromEmail}
-                onChange={(e) => setConfig({ ...config, fromEmail: e.target.value })}
-                placeholder="no-reply@certigen.my.id"
-                className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all outline-none text-sm"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-stone-500 uppercase">From Name</label>
-              <input 
-                type="text" 
-                value={config.fromName}
-                onChange={(e) => setConfig({ ...config, fromName: e.target.value })}
-                placeholder="Certi Gen"
-                className="w-full p-3 bg-stone-50 border border-stone-200 rounded-xl focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all outline-none text-sm"
-              />
-            </div>
-          </div>
+        <div className="p-8 border-2 border-dashed border-stone-100 rounded-3xl text-center">
+          <Palette className="w-10 h-10 text-stone-200 mx-auto mb-4" />
+          <p className="text-sm text-stone-400 font-medium">More settings coming soon...</p>
         </div>
-
-        <button 
-          onClick={handleSave}
-          disabled={isSaving}
-          className={cn(
-            "w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all",
-            isSaved 
-              ? "bg-emerald-500 text-white" 
-              : "bg-stone-900 text-white hover:bg-stone-800 shadow-lg shadow-stone-200 disabled:opacity-50"
-          )}
-        >
-          {isSaving ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
-          ) : isSaved ? (
-            <>
-              <CheckCircle2 className="w-5 h-5" />
-              <span>Settings Saved!</span>
-            </>
-          ) : (
-            <>
-              <Save className="w-5 h-5" />
-              <span>Save Changes</span>
-            </>
-          )}
-        </button>
       </div>
     </div>
   );
