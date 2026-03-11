@@ -115,25 +115,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return () => clearTimeout(timer);
     }
 
-    // Safety timeout: if auth state doesn't resolve in 10 seconds, stop loading
+    // Safety timeout: if auth state doesn't resolve in 60 seconds, stop loading
     const safetyTimeout = setTimeout(() => {
       console.warn("Auth state resolution timed out. Forcing isLoading to false.");
       setIsLoading(false);
-    }, 10000);
+    }, 60000);
 
     // Initial session check
     const checkInitialSession = async () => {
       if (!supabase) return;
+      console.log("Starting initial session check...");
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        console.log("Initial session check result:", session ? "Session found" : "No session");
         if (session?.user) {
           const profile = await fetchProfile(session.user.id);
-          if (profile) setUser(profile);
+          if (profile) {
+            setUser(profile);
+            console.log("Initial profile loaded successfully");
+          }
         }
       } catch (err) {
         console.error("Initial session check failed:", err);
       } finally {
         setIsLoading(false);
+        clearTimeout(safetyTimeout);
+        console.log("Initial session check completed, loading finished");
       }
     };
     checkInitialSession();
