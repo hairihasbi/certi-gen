@@ -141,8 +141,9 @@ function DesignerContent() {
 
           <nav className="hidden md:flex items-center gap-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
             {tabs.map((tab) => (
-              <button
+              <motion.button
                 key={tab.id}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => handleTabChange(tab.id as Tab)}
                 className={cn(
                   "px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2",
@@ -153,7 +154,7 @@ function DesignerContent() {
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
-              </button>
+              </motion.button>
             ))}
           </nav>
 
@@ -163,13 +164,15 @@ function DesignerContent() {
               <span className="text-sm font-bold text-stone-900">{user.username === "admin" ? "Hairi Hasbi" : user.username}</span>
               <span className="text-xs text-stone-500 uppercase tracking-widest font-semibold">{user.role}</span>
             </div>
-            <button 
+            <motion.button 
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={logout}
               className="w-10 h-10 bg-stone-100 rounded-xl flex items-center justify-center text-stone-500 hover:bg-stone-200 hover:text-stone-900 transition-all border border-stone-200"
               title="Logout"
             >
               <LogOut className="w-5 h-5" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </header>
@@ -211,7 +214,10 @@ function DesignerContent() {
             {activeTab === "design" && (
               <div className="space-y-12">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
+                  <motion.div 
+                    whileHover={{ y: -4 }}
+                    className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center"
+                  >
                     <div className="w-20 h-20 bg-stone-100 rounded-2xl flex items-center justify-center text-stone-600 mb-6 group-hover:scale-110 transition-transform">
                       <Palette className="w-10 h-10" />
                     </div>
@@ -219,16 +225,21 @@ function DesignerContent() {
                     <p className="text-stone-500 mb-8 max-w-sm">
                       Our professional built-in editor with full control over text, shapes, and images.
                     </p>
-                    <Link 
-                      href="/designer/internal"
-                      className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all flex items-center justify-center gap-2"
-                    >
-                      Open Internal Designer
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
-                  </div>
+                    <motion.div whileTap={{ scale: 0.98 }} className="w-full">
+                      <Link 
+                        href="/designer/internal"
+                        className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold hover:bg-stone-800 transition-all flex items-center justify-center gap-2"
+                      >
+                        Open Internal Designer
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </motion.div>
+                  </motion.div>
 
-                  <div className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center">
+                  <motion.div 
+                    whileHover={{ y: -4 }}
+                    className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm hover:shadow-xl transition-all group flex flex-col items-center text-center"
+                  >
                     <div className="w-20 h-20 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-6 group-hover:scale-110 transition-transform">
                       <ExternalLink className="w-10 h-10" />
                     </div>
@@ -236,14 +247,16 @@ function DesignerContent() {
                     <p className="text-stone-500 mb-8 max-w-sm">
                       Design your certificate on Canva and import it directly into Certi Gen.
                     </p>
-                    <Link 
-                      href="/designer/canva"
-                      className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
-                    >
-                      Design on Canva
-                      <ChevronRight className="w-4 h-4" />
-                    </Link>
-                  </div>
+                    <motion.div whileTap={{ scale: 0.98 }} className="w-full">
+                      <Link 
+                        href="/designer/canva"
+                        className="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                      >
+                        Design on Canva
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </motion.div>
+                  </motion.div>
                 </div>
 
                 {templates.length > 0 && (
@@ -254,8 +267,10 @@ function DesignerContent() {
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                       {templates.map((template) => (
-                        <button
+                        <motion.button
                           key={template.id}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => handleSelectTemplate(template.id)}
                           className={cn(
                             "group relative aspect-[4/3] bg-white rounded-2xl border-2 overflow-hidden transition-all text-left",
@@ -275,17 +290,19 @@ function DesignerContent() {
                                 <p className="text-white font-bold text-sm truncate">{template.name}</p>
                                 <p className="text-white/70 text-[10px] font-medium">Updated {new Date(template.updated_at).toLocaleDateString()}</p>
                               </div>
-                              <Link 
-                                href={`/designer/internal?id=${template.id}`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="p-2 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors"
-                                title="Edit Template"
-                              >
-                                <Palette className="w-4 h-4" />
-                              </Link>
+                              <motion.div whileTap={{ scale: 0.8 }}>
+                                <Link 
+                                  href={`/designer/internal?id=${template.id}`}
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="p-2 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors"
+                                  title="Edit Template"
+                                >
+                                  <Palette className="w-4 h-4" />
+                                </Link>
+                              </motion.div>
                             </div>
                           </div>
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
                   </div>
@@ -329,8 +346,9 @@ function DesignerContent() {
       {/* Mobile Nav */}
       <nav className="md:hidden fixed bottom-6 left-6 right-6 bg-white/80 backdrop-blur-xl border border-stone-200 rounded-2xl p-2 flex items-center justify-between shadow-2xl z-50">
         {tabs.map((tab) => (
-          <button
+          <motion.button
             key={tab.id}
+            whileTap={{ scale: 0.9 }}
             onClick={() => handleTabChange(tab.id as Tab)}
             className={cn(
               "flex-1 flex flex-col items-center gap-1 py-2 rounded-xl transition-all",
@@ -341,7 +359,7 @@ function DesignerContent() {
           >
             <tab.icon className="w-5 h-5" />
             <span className="text-[10px] font-bold uppercase tracking-wider">{tab.label.split(' ')[0]}</span>
-          </button>
+          </motion.button>
         ))}
       </nav>
     </main>
