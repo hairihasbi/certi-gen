@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .single();
         
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Timeout")), 30000)
+          setTimeout(() => reject(new Error("Timeout")), 60000)
         );
 
         const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
