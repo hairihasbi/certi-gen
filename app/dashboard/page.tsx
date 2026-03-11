@@ -115,8 +115,10 @@ export default function DashboardPage() {
             
             <nav className="hidden lg:flex items-center gap-1">
               {["Overview", "Templates", "Certificates"].map((item) => (
-                <button 
+                <motion.button 
                   key={item} 
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setActiveTab(item)}
                   className={cn(
                     "px-4 py-1.5 text-sm font-semibold rounded-lg transition-colors",
@@ -124,7 +126,7 @@ export default function DashboardPage() {
                   )}
                 >
                   {item}
-                </button>
+                </motion.button>
               ))}
             </nav>
           </div>
@@ -144,7 +146,9 @@ export default function DashboardPage() {
                 <p className="text-xs font-bold text-stone-900 leading-none">{user.username === "admin" ? "Hairi Hasbi" : user.username}</p>
                 <p className="text-[10px] font-bold text-stone-400 uppercase tracking-tighter mt-0.5">{user.role}</p>
               </div>
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => {
                   logout();
                   router.push("/");
@@ -152,7 +156,7 @@ export default function DashboardPage() {
                 className="w-8 h-8 bg-stone-50 rounded-lg flex items-center justify-center text-stone-400 hover:bg-red-50 hover:text-red-600 transition-all border border-stone-200"
               >
                 <LogOut className="w-4 h-4" />
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -172,17 +176,22 @@ export default function DashboardPage() {
           
           <div className="flex flex-wrap gap-3">
             {quickActions.map((action) => (
-              <Link 
+              <motion.div
                 key={action.label}
-                href={action.href}
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm",
-                  action.color
-                )}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <action.icon className="w-4 h-4" />
-                {action.label}
-              </Link>
+                <Link 
+                  href={action.href}
+                  className={cn(
+                    "flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm",
+                    action.color
+                  )}
+                >
+                  <action.icon className="w-4 h-4" />
+                  {action.label}
+                </Link>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -224,12 +233,14 @@ export default function DashboardPage() {
                           <h3 className="font-bold text-stone-900 text-lg">Sertifikat Terbaru</h3>
                           <p className="text-xs text-stone-400 font-medium">Data transaksi sertifikat 24 jam terakhir</p>
                         </div>
-                        <button 
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => setActiveTab("Certificates")}
                           className="px-4 py-2 text-xs font-bold text-stone-600 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors border border-stone-200"
                         >
                           Lihat Semua
-                        </button>
+                        </motion.button>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left">
@@ -261,7 +272,9 @@ export default function DashboardPage() {
                                   <span className="text-xs text-stone-500">{cert.date}</span>
                                 </td>
                                 <td className="px-8 py-5 text-right flex items-center justify-end gap-3">
-                                  <button 
+                                  <motion.button 
+                                    whileHover={{ scale: 1.2 }}
+                                    whileTap={{ scale: 0.8 }}
                                     onClick={async () => {
                                       const email = certificates.find(c => (c.certificate_number || c.id.substring(0, 8)) === cert.id)?.recipient_data?.email;
                                       if (!email) {
@@ -288,7 +301,7 @@ export default function DashboardPage() {
                                     title="Kirim Email"
                                   >
                                     <Mail className="w-4 h-4" />
-                                  </button>
+                                  </motion.button>
                                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-100">
                                     <div className="w-1 h-1 rounded-full bg-emerald-600" />
                                     {cert.status}
@@ -300,12 +313,14 @@ export default function DashboardPage() {
                         </table>
                       </div>
                       <div className="px-8 py-4 bg-stone-50/50 border-t border-stone-100 text-center">
-                        <button 
+                        <motion.button 
+                          whileHover={{ x: 5 }}
+                          whileTap={{ scale: 0.95 }}
                           onClick={() => setActiveTab("Certificates")}
                           className="text-xs font-bold text-stone-500 hover:text-stone-900 transition-colors"
                         >
                           Lihat Semua Sertifikat &rarr;
-                        </button>
+                        </motion.button>
                       </div>
                     </div>
 
@@ -317,13 +332,15 @@ export default function DashboardPage() {
                           <p className="text-indigo-100 text-xs mb-6 leading-relaxed opacity-80">
                             Tinjau setiap aktivitas sistem, mulai dari login hingga pembuatan sertifikat massal untuk keamanan data.
                           </p>
-                          <Link 
-                            href="/dashboard/admin/logs"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-600 rounded-xl font-bold text-xs hover:bg-indigo-50 transition-all shadow-lg shadow-indigo-900/20"
-                          >
-                            Buka Log Sistem
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Link>
+                          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                            <Link 
+                              href="/dashboard/admin/logs"
+                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-indigo-600 rounded-xl font-bold text-xs hover:bg-indigo-50 transition-all shadow-lg shadow-indigo-900/20"
+                            >
+                              Buka Log Sistem
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </motion.div>
                         </div>
                         <FileText className="absolute -bottom-6 -right-6 w-32 h-32 text-white opacity-10 group-hover:scale-110 transition-transform duration-500" />
                       </div>
@@ -340,13 +357,15 @@ export default function DashboardPage() {
                             Gunakan editor internal kami yang powerful untuk membuat template sertifikat dengan variabel dinamis.
                           </p>
                         </div>
-                        <Link 
-                          href="/designer"
-                          className="mt-6 inline-flex items-center gap-2 text-xs font-bold text-stone-900 hover:gap-3 transition-all"
-                        >
-                          Mulai Mendesain
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
+                        <motion.div whileHover={{ x: 5 }} whileTap={{ scale: 0.95 }}>
+                          <Link 
+                            href="/designer"
+                            className="mt-6 inline-flex items-center gap-2 text-xs font-bold text-stone-900 hover:gap-3 transition-all"
+                          >
+                            Mulai Mendesain
+                            <ArrowRight className="w-3.5 h-3.5" />
+                          </Link>
+                        </motion.div>
                       </div>
                     </div>
                   </div>
@@ -426,13 +445,15 @@ export default function DashboardPage() {
                     <h3 className="text-2xl font-bold text-stone-900">Manajemen Template</h3>
                     <p className="text-stone-500">Kelola semua template sertifikat yang tersedia.</p>
                   </div>
-                  <Link 
-                    href="/designer"
-                    className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-bold text-sm hover:bg-stone-800 transition-all flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Buat Template Baru
-                  </Link>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Link 
+                      href="/designer"
+                      className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-bold text-sm hover:bg-stone-800 transition-all flex items-center gap-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      Buat Template Baru
+                    </Link>
+                  </motion.div>
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -447,13 +468,17 @@ export default function DashboardPage() {
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                          <Link 
-                            href={`/designer?tab=edit&templateId=${template.id}`}
-                            className="px-4 py-2 bg-white text-stone-900 rounded-lg font-bold text-xs"
-                          >
-                            Edit
-                          </Link>
-                          <button 
+                          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                            <Link 
+                              href={`/designer?tab=edit&templateId=${template.id}`}
+                              className="px-4 py-2 bg-white text-stone-900 rounded-lg font-bold text-xs"
+                            >
+                              Edit
+                            </Link>
+                          </motion.div>
+                          <motion.button 
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
                             onClick={async () => {
                               if (confirm(`Apakah Anda yakin ingin menghapus template "${template.name}"?`)) {
                                 const { error } = await deleteTemplate(template.id);
@@ -463,7 +488,7 @@ export default function DashboardPage() {
                             className="px-4 py-2 bg-red-600 text-white rounded-lg font-bold text-xs"
                           >
                             Hapus
-                          </button>
+                          </motion.button>
                         </div>
                       </div>
                       <div className="p-4">
@@ -502,7 +527,9 @@ export default function DashboardPage() {
                         className="pl-9 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-lg text-xs focus:ring-2 focus:ring-stone-900/10 outline-none w-64"
                       />
                     </div>
-                    <button 
+                    <motion.button 
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         if (certificates.length === 0) return;
                         const headers = ["Recipient", "Email", "Event", "Certificate Number", "Hash", "Date"];
@@ -528,7 +555,7 @@ export default function DashboardPage() {
                       className="px-4 py-2 text-xs font-bold text-stone-600 bg-stone-50 rounded-lg hover:bg-stone-100 transition-colors border border-stone-200"
                     >
                       Ekspor CSV
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
                 <div className="overflow-x-auto">
@@ -565,12 +592,12 @@ export default function DashboardPage() {
                             <span className="text-xs text-stone-500">{new Date(cert.created_at).toLocaleDateString()}</span>
                           </td>
                           <td className="px-8 py-5 text-right flex items-center justify-end gap-2">
-                            <button className="p-2 text-stone-400 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-all">
+                            <motion.button whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="p-2 text-stone-400 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-all">
                               <FileText className="w-4 h-4" />
-                            </button>
-                            <button className="p-2 text-stone-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
+                            </motion.button>
+                            <motion.button whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }} className="p-2 text-stone-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all">
                               <Mail className="w-4 h-4" />
-                            </button>
+                            </motion.button>
                           </td>
                         </tr>
                       ))}
@@ -607,19 +634,27 @@ export default function DashboardPage() {
                     className="w-full px-6 py-4 bg-stone-50 border border-stone-200 rounded-2xl text-lg font-mono focus:ring-2 focus:ring-stone-900 focus:border-transparent transition-all"
                   />
                 </div>
-                <button className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-lg hover:bg-stone-800 transition-all flex items-center justify-center gap-3 shadow-lg shadow-stone-200">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-4 bg-stone-900 text-white rounded-2xl font-bold text-lg hover:bg-stone-800 transition-all flex items-center justify-center gap-3 shadow-lg shadow-stone-200"
+                >
                   <CheckCircle className="w-6 h-6" />
                   Verifikasi Sekarang
-                </button>
+                </motion.button>
                 <div className="flex items-center gap-4 py-4">
                   <div className="flex-1 h-px bg-stone-100" />
                   <span className="text-xs font-bold text-stone-300 uppercase tracking-widest">Atau</span>
                   <div className="flex-1 h-px bg-stone-100" />
                 </div>
-                <button className="w-full py-4 bg-stone-100 text-stone-900 rounded-2xl font-bold text-lg hover:bg-stone-200 transition-all flex items-center justify-center gap-3">
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-4 bg-stone-100 text-stone-900 rounded-2xl font-bold text-lg hover:bg-stone-200 transition-all flex items-center justify-center gap-3"
+                >
                   <QrCode className="w-6 h-6" />
                   Scan QR Code
-                </button>
+                </motion.button>
               </div>
             </div>
 
@@ -634,13 +669,15 @@ export default function DashboardPage() {
                   <p className="text-sm text-stone-500 mb-6">
                     Mulai membuat desain sertifikat kustom Anda sendiri menggunakan editor internal atau Canva.
                   </p>
-                  <Link 
-                    href="/designer"
-                    className="inline-flex items-center gap-2 text-sm font-bold text-stone-900 hover:gap-3 transition-all"
-                  >
-                    Buka Designer
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
+                  <motion.div whileHover={{ x: 5 }} whileTap={{ scale: 0.95 }}>
+                    <Link 
+                      href="/designer"
+                      className="inline-flex items-center gap-2 text-sm font-bold text-stone-900 hover:gap-3 transition-all"
+                    >
+                      Buka Designer
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </motion.div>
                 </div>
                 <Palette className="absolute -bottom-4 -right-4 w-24 h-24 text-stone-50 opacity-5 group-hover:scale-110 transition-transform" />
               </div>
@@ -656,10 +693,14 @@ export default function DashboardPage() {
                     placeholder="email@anda.com" 
                     className="w-full px-6 py-4 bg-stone-800 border border-stone-700 rounded-2xl text-white focus:ring-2 focus:ring-white focus:border-transparent transition-all"
                   />
-                  <button className="w-full py-4 bg-white text-stone-900 rounded-2xl font-bold text-lg hover:bg-stone-100 transition-all flex items-center justify-center gap-3">
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full py-4 bg-white text-stone-900 rounded-2xl font-bold text-lg hover:bg-stone-100 transition-all flex items-center justify-center gap-3"
+                  >
                     <FileText className="w-6 h-6" />
                     Cari Sertifikat
-                  </button>
+                  </motion.button>
                 </div>
                 <Award className="absolute -bottom-10 -right-10 w-64 h-64 text-stone-800 opacity-30" />
               </div>
@@ -669,7 +710,13 @@ export default function DashboardPage() {
                 <p className="text-sm text-stone-500 mb-6">
                   Jika Anda mengalami kendala dalam verifikasi atau pengunduhan sertifikat, silakan hubungi tim dukungan kami.
                 </p>
-                <button className="text-sm font-bold text-stone-900 hover:underline">Hubungi Support &rarr;</button>
+                <motion.button 
+                  whileHover={{ x: 5 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="text-sm font-bold text-stone-900 hover:underline"
+                >
+                  Hubungi Support &rarr;
+                </motion.button>
               </div>
             </div>
           </div>
