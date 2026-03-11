@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "motion/react";
 import { Upload, Plus, Trash2, FileSpreadsheet, ArrowRight, ArrowLeft, Database, Download, Settings2 } from "lucide-react";
 import Papa from "papaparse";
 
@@ -64,29 +65,35 @@ const DataInputStep: React.FC<DataInputStepProps> = ({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <button 
+        <motion.button 
+          whileHover={{ x: -2 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onBack}
           className="flex items-center gap-2 px-4 py-2 text-stone-600 hover:bg-stone-100 rounded-lg transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Design
-        </button>
+        </motion.button>
         <div className="flex items-center gap-4">
-          <button 
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={downloadCsvTemplate}
             className="flex items-center gap-2 px-4 py-2 bg-stone-100 text-stone-600 rounded-lg font-bold hover:bg-stone-200 transition-all text-sm"
           >
             <Download className="w-4 h-4" />
             Download CSV Template
-          </button>
-          <button 
+          </motion.button>
+          <motion.button 
+            whileHover={{ x: 2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onNext}
             disabled={data.length === 0 || !selectedTemplateId}
             className="flex items-center gap-2 px-6 py-2 bg-stone-900 text-white rounded-lg font-bold hover:bg-stone-800 transition-all disabled:opacity-50"
           >
             Next: Position Elements
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -138,13 +145,15 @@ const DataInputStep: React.FC<DataInputStepProps> = ({
                     />
                   </div>
                 ))}
-                <button 
+                <motion.button 
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={handleManualAdd}
                   className="w-full py-2 bg-stone-100 text-stone-600 rounded-lg font-bold text-sm hover:bg-stone-200 transition-all flex items-center justify-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   Add to List
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>

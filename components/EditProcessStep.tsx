@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
+import { motion } from "motion/react";
 import { Stage, Layer, Text, Image as KonvaImage, Transformer, Rect, Circle, Star, RegularPolygon, Arrow } from "react-konva";
 import useImage from "use-image";
 import { ArrowLeft, ArrowRight, Move, Type, MousePointer2 } from "lucide-react";
@@ -69,20 +70,24 @@ const EditProcessStep: React.FC<EditProcessStepProps> = ({ template, elements, s
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <button 
+        <motion.button 
+          whileHover={{ x: -2 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onBack}
           className="flex items-center gap-2 px-4 py-2 text-stone-600 hover:bg-stone-100 rounded-lg transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Data
-        </button>
-        <button 
+        </motion.button>
+        <motion.button 
+          whileHover={{ x: 2 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onNext}
           className="flex items-center gap-2 px-6 py-2 bg-stone-900 text-white rounded-lg font-bold hover:bg-stone-800 transition-all"
         >
           Next: Generate
           <ArrowRight className="w-4 h-4" />
-        </button>
+        </motion.button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">

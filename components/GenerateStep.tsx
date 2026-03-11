@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import { motion } from "motion/react";
 import { Stage, Layer, Text, Image as KonvaImage, Rect, Circle, Star, RegularPolygon, Arrow, Group } from "react-konva";
 import useImage from "use-image";
 import { ArrowLeft, Download, Play, Loader2, Settings2, Hash, FileCheck, CheckCircle2, Printer, Eye } from "lucide-react";
@@ -140,14 +141,16 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <button 
+        <motion.button 
+          whileHover={{ x: -2 }}
+          whileTap={{ scale: 0.98 }}
           onClick={onBack}
           disabled={isGenerating}
           className="flex items-center gap-2 px-4 py-2 text-stone-600 hover:bg-stone-100 rounded-lg transition-all disabled:opacity-50"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Edit
-        </button>
+        </motion.button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -249,7 +252,9 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
                 </div>
               </div>
 
-              <button 
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleGenerate}
                 disabled={isGenerating || data.length === 0}
                 className={cn(
@@ -268,7 +273,7 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
                     <span>Generate & Download</span>
                   </>
                 )}
-              </button>
+              </motion.button>
               
               {isComplete && (
                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2">
@@ -276,13 +281,15 @@ const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, o
                     <CheckCircle2 className="w-4 h-4" />
                     All certificates generated!
                   </div>
-                  <button 
+                  <motion.button 
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     onClick={handlePrint}
                     className="w-full py-3 bg-white text-stone-900 border-2 border-stone-900 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-stone-50 transition-all"
                   >
                     <Printer className="w-5 h-5" />
                     Windows Print
-                  </button>
+                  </motion.button>
                 </div>
               )}
 
