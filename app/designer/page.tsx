@@ -270,8 +270,20 @@ function DesignerContent() {
                             </div>
                           )}
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
-                            <p className="text-white font-bold text-sm truncate">{template.name}</p>
-                            <p className="text-white/70 text-[10px] font-medium">Updated {new Date(template.updated_at).toLocaleDateString()}</p>
+                            <div className="flex items-center justify-between">
+                              <div className="overflow-hidden">
+                                <p className="text-white font-bold text-sm truncate">{template.name}</p>
+                                <p className="text-white/70 text-[10px] font-medium">Updated {new Date(template.updated_at).toLocaleDateString()}</p>
+                              </div>
+                              <Link 
+                                href={`/designer/internal?id=${template.id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className="p-2 bg-white/20 hover:bg-white/40 rounded-lg text-white transition-colors"
+                                title="Edit Template"
+                              >
+                                <Palette className="w-4 h-4" />
+                              </Link>
+                            </div>
                           </div>
                         </button>
                       ))}
