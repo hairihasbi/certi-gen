@@ -124,6 +124,15 @@ export function useRealtimeData() {
       .select()
       .single();
 
+    if (error) {
+      console.error("Error saving template:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+    }
+
     return { data, error };
   }, [user]);
 
@@ -142,6 +151,15 @@ export function useRealtimeData() {
       })
       .select()
       .single();
+
+    if (error) {
+      console.error("Error saving certificate:", {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+    }
 
     return { data, error };
   }, [user]);
