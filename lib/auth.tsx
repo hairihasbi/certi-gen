@@ -58,13 +58,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .single();
         
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Timeout")), 60000)
+          setTimeout(() => reject(new Error("Timeout")), 15000)
         );
 
         const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
         
         if (error) {
           console.error(`Error fetching profile (attempt ${i + 1}):`, error.message);
+          if (error.code === "42P01") {
+            console.error("Table 'profiles' does not exist. Please run the SQL setup in the dashboard.");
+          }
           if (i === retries - 1) return null;
           await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
           continue;
@@ -115,18 +118,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return () => clearTimeout(timer);
     }
 
-    // Safety timeout: if auth state doesn't resolve in 60 seconds, stop loading
+    // Safety timeout: if auth state doesn't resolve in 30 seconds, stop loading
     const safetyTimeout = setTimeout(() => {
-      console.warn("Auth state resolution timed out. Forcing isLoading to false.");
+      console.warn("Auth state resolution timed out. This may be due to a slow connection or incorrect Supabase configuration. Forcing isLoading to false.");
       setIsLoading(false);
-    }, 60000);
+    }, 30000);
 
     // Initial session check
     const checkInitialSession = async () => {
       if (!supabase) return;
       console.log("Starting initial session check...");
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Timeout")), 15000)
+        );
+        
+        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]) as any;
         console.log("Initial session check result:", session ? "Session found" : "No session");
         if (session?.user) {
           const profile = await fetchProfile(session.user.id);
