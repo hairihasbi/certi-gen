@@ -109,18 +109,24 @@ export function useRealtimeData() {
     };
   }, [user, fetchTemplates, fetchCertificates, fetchSystemStats]);
 
-  const saveTemplate = useCallback(async (name: string, elements: any[], backgroundUrl: string | null) => {
+  const saveTemplate = useCallback(async (name: string, elements: any[], backgroundUrl: string | null, id?: string) => {
     if (!supabase || !user) return { error: { message: "Not connected" } };
+
+    const payload: any = {
+      user_id: user.id,
+      name,
+      elements,
+      background_url: backgroundUrl,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (id) {
+      payload.id = id;
+    }
 
     const { data, error } = await supabase
       .from("templates")
-      .upsert({
-        user_id: user.id,
-        name,
-        elements,
-        background_url: backgroundUrl,
-        updated_at: new Date().toISOString(),
-      })
+      .upsert(payload)
       .select()
       .single();
 
