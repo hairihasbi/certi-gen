@@ -37,19 +37,23 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <SupabaseStatus />
             {user ? (
-              <Link 
-                href="/dashboard"
-                className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-bold text-sm hover:bg-stone-800 transition-all shadow-lg shadow-stone-200"
-              >
-                Ke Dashboard
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link 
+                  href="/dashboard"
+                  className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-bold text-sm hover:bg-stone-800 transition-all shadow-lg shadow-stone-200 block"
+                >
+                  Ke Dashboard
+                </Link>
+              </motion.div>
             ) : (
-              <Link 
-                href="/login"
-                className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-bold text-sm hover:bg-stone-800 transition-all shadow-lg shadow-stone-200"
-              >
-                Login
-              </Link>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Link 
+                  href="/login"
+                  className="px-6 py-2.5 bg-stone-900 text-white rounded-xl font-bold text-sm hover:bg-stone-800 transition-all shadow-lg shadow-stone-200 block"
+                >
+                  Login
+                </Link>
+              </motion.div>
             )}
           </div>
         </div>
@@ -75,19 +79,23 @@ export default function LandingPage() {
                 Certi Gen membantu organisasi menerbitkan sertifikat digital yang aman, dapat diverifikasi secara instan, dan memiliki desain profesional.
               </p>
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <Link 
-                  href="/login"
-                  className="w-full sm:w-auto px-8 py-4 bg-stone-900 text-white rounded-2xl font-bold text-lg hover:bg-stone-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-stone-200"
-                >
-                  Mulai Sekarang
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-                <a 
-                  href="#verify"
-                  className="w-full sm:w-auto px-8 py-4 bg-white text-stone-900 border border-stone-200 rounded-2xl font-bold text-lg hover:bg-stone-50 transition-all flex items-center justify-center gap-3"
-                >
-                  Verifikasi Sertifikat
-                </a>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                  <Link 
+                    href="/login"
+                    className="w-full sm:w-auto px-8 py-4 bg-stone-900 text-white rounded-2xl font-bold text-lg hover:bg-stone-800 transition-all flex items-center justify-center gap-3 shadow-xl shadow-stone-200"
+                  >
+                    Mulai Sekarang
+                    <ArrowRight className="w-5 h-5" />
+                  </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full sm:w-auto">
+                  <a 
+                    href="#verify"
+                    className="w-full sm:w-auto px-8 py-4 bg-white text-stone-900 border border-stone-200 rounded-2xl font-bold text-lg hover:bg-stone-50 transition-all flex items-center justify-center gap-3"
+                  >
+                    Verifikasi Sertifikat
+                  </a>
+                </motion.div>
               </div>
             </motion.div>
           </div>
