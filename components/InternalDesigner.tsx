@@ -18,13 +18,33 @@ import {
 import { cn } from "@/lib/utils";
 import { ImageElement, QRElement, Element } from "./CanvasElements";
 
-const InternalDesigner = ({ onSave }: { onSave?: (name: string, template: string, elements: Element[]) => void }) => {
-  const [templateName, setTemplateName] = useState("My Template");
-  const [elements, setElements] = useState<Element[]>([]);
-  const [history, setHistory] = useState<Element[][]>([]);
-  const [historyStep, setHistoryStep] = useState(-1);
+const InternalDesigner = ({ 
+  onSave, 
+  initialName, 
+  initialElements, 
+  initialBackground 
+}: { 
+  onSave?: (name: string, template: string, elements: Element[]) => void;
+  initialName?: string;
+  initialElements?: Element[];
+  initialBackground?: string | null;
+}) => {
+  const [templateName, setTemplateName] = useState(initialName || "My Template");
+  const [elements, setElements] = useState<Element[]>(initialElements || []);
+  const [history, setHistory] = useState<Element[][]>(initialElements ? [initialElements] : []);
+  const [historyStep, setHistoryStep] = useState(initialElements ? 0 : -1);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [bgImageSrc, setBgImageSrc] = useState<string | null>(null);
+  const [bgImageSrc, setBgImageSrc] = useState<string | null>(initialBackground || null);
+
+  useEffect(() => {
+    if (initialName) setTemplateName(initialName);
+    if (initialElements) {
+      setElements(initialElements);
+      setHistory([initialElements]);
+      setHistoryStep(0);
+    }
+    if (initialBackground) setBgImageSrc(initialBackground);
+  }, [initialName, initialElements, initialBackground]);
   const [bgImage] = useImage(bgImageSrc || "", "anonymous");
   const [snapToGrid, setSnapToGrid] = useState(false);
   const [zoom, setZoom] = useState(1);

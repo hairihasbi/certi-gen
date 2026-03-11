@@ -65,6 +65,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE settings;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- Kebijakan: User bisa melihat profil mereka sendiri (Tanpa Rekursi)
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
 
@@ -80,21 +81,31 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Kebijakan: Admin bisa melihat semua profil (Menggunakan fungsi SECURITY DEFINER)
+DROP POLICY IF EXISTS "Admins can view all profiles" ON profiles;
 CREATE POLICY "Admins can view all profiles" ON profiles
   FOR SELECT USING (is_admin());
 
 -- Kebijakan: Admin bisa mengupdate profil
+DROP POLICY IF EXISTS "Admins can update profiles" ON profiles;
 CREATE POLICY "Admins can update profiles" ON profiles
   FOR UPDATE USING (is_admin());
 
 -- Aktifkan RLS pada tabel lain
 ALTER TABLE templates ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can manage own templates" ON templates
-  FOR ALL USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can manage own templates" ON templates;
+CREATE POLICY "Users can insert own templates" ON templates FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can select own templates" ON templates FOR SELECT USING (auth.uid() = user_id OR is_admin());
+CREATE POLICY "Users can update own templates" ON templates FOR UPDATE USING (auth.uid() = user_id OR is_admin());
+CREATE POLICY "Users can delete own templates" ON templates FOR DELETE USING (auth.uid() = user_id OR is_admin());
 
 ALTER TABLE certificates ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can manage own certificates" ON certificates
-  FOR ALL USING (auth.uid() = user_id);
+DROP POLICY IF EXISTS "Users can manage own certificates" ON certificates;
+CREATE POLICY "Users can insert own certificates" ON certificates FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can select own certificates" ON certificates FOR SELECT USING (auth.uid() = user_id OR is_admin());
+CREATE POLICY "Users can update own certificates" ON certificates FOR UPDATE USING (auth.uid() = user_id OR is_admin());
+CREATE POLICY "Users can delete own certificates" ON certificates FOR DELETE USING (auth.uid() = user_id OR is_admin());
+
+DROP POLICY IF EXISTS "Public can view certificates for verification" ON certificates;
 CREATE POLICY "Public can view certificates for verification" ON certificates
   FOR SELECT USING (true);
 
