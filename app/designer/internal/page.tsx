@@ -11,14 +11,31 @@ import { SupabaseStatus } from "@/components/SupabaseStatus";
 
 export default function InternalDesignerPage() {
   const { user, logout, isLoading } = useAuth();
-  const { saveTemplate } = useRealtimeData();
+  const { saveTemplate, templates } = useRealtimeData();
   const router = useRouter();
+  const [initialData, setInitialData] = useState<{ name: string; elements: any[]; backgroundUrl: string | null; id?: string } | null>(null);
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push("/login");
     }
   }, [user, isLoading, router]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const templateId = params.get("id");
+    if (templateId && templates.length > 0) {
+      const template = templates.find(t => t.id === templateId);
+      if (template) {
+        setInitialData({
+          id: template.id,
+          name: template.name,
+          elements: template.elements,
+          backgroundUrl: template.background_url
+        });
+      }
+    }
+  }, [templates]);
 
   if (isLoading || !user) {
     return (
@@ -68,13 +85,17 @@ export default function InternalDesignerPage() {
 
       <div className="p-6">
         <InternalDesigner 
+          initialName={initialData?.name}
+          initialElements={initialData?.elements}
+          initialBackground={initialData?.backgroundUrl}
           onSave={async (name, template, elements) => {
             // Save to Supabase
-            const { data, error } = await saveTemplate(name, elements, template);
+            const { data, error } = await saveTemplate(name, elements, template, initialData?.id);
             if (!error && data) {
               router.push(`/designer?tab=data&templateId=${data.id}`);
             } else {
-              router.push("/designer?tab=data");
+              // If error, we stay on the page or handle it
+              console.error("Failed to save template:", error);
             }
           }} 
         />
