@@ -22,7 +22,7 @@ import { generateCertificateHash, formatCertificateDataForHashing } from "@/lib/
 const GenerateStep: React.FC<GenerateStepProps> = ({ template, elements, data, onBack }) => {
   const { user, addLog } = useAuth();
   const { saveCertificate } = useRealtimeData();
-  const [bgImage] = useImage(template || "");
+  const [bgImage] = useImage(template || "", "anonymous");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);

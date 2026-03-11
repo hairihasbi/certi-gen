@@ -46,7 +46,7 @@ export interface Element {
 }
 
 export const ImageElement = ({ el, commonProps }: { el: Element; commonProps: any }) => {
-  const [img] = useImage(el.src || "");
+  const [img] = useImage(el.src || "", "anonymous");
   const imageRef = useRef<any>(null);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export const ImageElement = ({ el, commonProps }: { el: Element; commonProps: an
 };
 
 export const QRElement = ({ el, commonProps }: { el: Element; commonProps: any }) => {
-  const [img] = useImage(el.src || "");
+  const [img] = useImage(el.src || "", "anonymous");
   return (
     <Group {...commonProps}>
       {img ? (

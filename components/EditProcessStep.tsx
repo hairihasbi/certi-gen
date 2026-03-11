@@ -17,7 +17,7 @@ interface EditProcessStepProps {
 }
 
 const EditProcessStep: React.FC<EditProcessStepProps> = ({ template, elements, setElements, data, onNext, onBack }) => {
-  const [bgImage] = useImage(template || "");
+  const [bgImage] = useImage(template || "", "anonymous");
   const [stageSize, setStageSize] = useState({ width: 800, height: 600 });
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const stageRef = useRef<any>(null);
