@@ -68,7 +68,7 @@ export const InfrastructureStatus = ({ onStatusChange }: { onStatusChange?: (sta
         .limit(1);
       
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Timeout")), 15000)
+        setTimeout(() => reject(new Error("Timeout")), 60000)
       );
 
       const { data, error } = await Promise.race([fetchPromise, timeoutPromise]) as any;
